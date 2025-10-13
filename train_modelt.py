@@ -62,7 +62,7 @@ print("\n📊 Email Classification Report:\n", classification_report(y_test, y_p
 
 ### ---------- 5. Train URL-Based Model Separately ----------
 url_df = pd.read_csv("urls.csv")
-url_df.columns = ['url', 'label']  # Rename columns
+url_df.columns = ['url', 'label']  
 url_df['label'] = url_df['label'].map({'bad': 1, 'good': 0})  # Convert to binary
 url_df.dropna(inplace=True)
 
