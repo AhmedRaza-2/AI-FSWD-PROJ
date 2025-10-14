@@ -16,7 +16,7 @@ namespace PhishingScannerOutlookAddin
     {
         private List<Items> monitoredItems = new List<Items>();
         public bool ScanEnabled = true;
-        private readonly string apiUrl = "http://127.0.0.1:5000/predict";
+        private readonly string apiUrl = "http://209.38.120.178:8000/predict";
         public int totalScanned = 0;
         public int totalPhishing = 0;
         public int totalClean = 0;
