@@ -13,7 +13,7 @@ app = Flask(__name__)
 print("🔄 Loading models...")
 email_model = joblib.load("phishing_model.joblib")
 url_model = joblib.load("url_phishing_model.joblib")
-embedder = joblib.load("sentence_embedder.joblib")
+embedder = SentenceTransformer("sentence_embedder")
 sender_columns = joblib.load("sender_columns.joblib")
 scaler = StandardScaler()  # used later for URL features
 print("✅ Models loaded successfully.")

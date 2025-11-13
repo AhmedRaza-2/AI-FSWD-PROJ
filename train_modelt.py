@@ -97,10 +97,9 @@ y_url_pred = url_model.predict(X_u_test)
 print(f"\n🌐 URL Model Accuracy: {accuracy_score(y_u_test, y_url_pred):.4f}")
 print("\n🌐 URL Classification Report:\n", classification_report(y_u_test, y_url_pred))
 
-### ---------- 6. Save All Models ----------
 joblib.dump(model, 'phishing_model.joblib')
 joblib.dump(sender_dummies.columns.tolist(), 'sender_columns.joblib')
-joblib.dump(embedder, 'sentence_embedder.joblib')
 joblib.dump(url_model, 'url_phishing_model.joblib')
 
-print("\n📦 Models saved successfully.")
+embedder.save('sentence_embedder')
+print("\n📦 All models saved successfully .")
