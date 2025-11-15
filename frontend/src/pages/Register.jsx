@@ -11,36 +11,112 @@ export default function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-  e.preventDefault();
-  try {
-    // 1️⃣ Firebase registration
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    e.preventDefault();
+    try {
+      // Firebase registration
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-    // 2️⃣ Save user in MongoDB
-    await axios.post("http://localhost:5000/api/user", {
-  uid: user.uid,
-  name,
-  email
-  });
-    
-    navigate("/dashboard");
-  } catch (err) {
-    console.error(err);
-    alert("Registration failed: " + err.message);
-  }
-};
+      // Save user in MongoDB
+      await axios.post("http://localhost:5000/api/user", {
+        uid: user.uid,
+        name,
+        email,
+      });
 
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+      alert("Registration failed: " + err.message);
+    }
+  };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form onSubmit={handleRegister} className="bg-white p-8 rounded shadow-md w-96 space-y-4">
-        <h2 className="text-2xl font-bold text-center">Register</h2>
-        <input type="text" placeholder="Full Name" className="border p-2 rounded w-full" value={name} onChange={(e)=>setName(e.target.value)}/>
-        <input type="email" placeholder="Email" className="border p-2 rounded w-full" value={email} onChange={(e)=>setEmail(e.target.value)}/>
-        <input type="password" placeholder="Password" className="border p-2 rounded w-full" value={password} onChange={(e)=>setPassword(e.target.value)}/>
-        <button className="bg-blue-600 text-white py-2 w-full rounded hover:bg-blue-700">Register</button>
-      </form>
+    <div
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{
+        background: "linear-gradient(135deg, #0A0F1F, #141A34, #1B2448)",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <div
+        className="p-5 rounded-4 shadow-lg"
+        style={{
+          maxWidth: "400px",
+          width: "100%",
+          background: "rgba(255, 255, 255, 0.08)",
+          backdropFilter: "blur(12px)",
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          boxShadow: "0 8px 30px rgba(0,0,0,0.4)",
+        }}
+      >
+        <h2 className="text-center mb-4" style={{ color: "#7CC9FF" }}>
+          🚀 Create Account
+        </h2>
+
+        <form onSubmit={handleRegister}>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              style={{ borderRadius: "10px" }}
+            />
+          </div>
+
+          <div className="mb-3">
+            <input
+              type="email"
+              className="form-control"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={{ borderRadius: "10px" }}
+            />
+          </div>
+
+          <div className="mb-3">
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ borderRadius: "10px" }}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn w-100 mb-3"
+            style={{
+              background: "linear-gradient(90deg, #0078D4, #00A4FF)",
+              borderRadius: "12px",
+              color: "white",
+              fontWeight: "bold",
+              fontSize: "16px",
+              boxShadow: "0 0 18px rgba(0, 174, 255, 0.6)",
+              transition: "0.3s",
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+            onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          >
+            Register
+          </button>
+
+          <p className="text-center" style={{ color: "#C9D7F3" }}>
+            Already have an account?{" "}
+            <a href="/login" style={{ color: "#9D65FF", textDecoration: "none" }}>
+              Login
+            </a>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
