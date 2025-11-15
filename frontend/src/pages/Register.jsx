@@ -18,12 +18,12 @@ export default function Register() {
     const user = userCredential.user;
 
     // 2️⃣ Save user in MongoDB
-    await axios.post("http://localhost:5000/api/user/register", {
-      uid: user.uid,
-      name,
-      email
-    });
-
+    await axios.post("http://localhost:5000/api/user", {
+  uid: user.uid,
+  name,
+  email
+  });
+    
     navigate("/dashboard");
   } catch (err) {
     console.error(err);
