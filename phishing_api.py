@@ -1,24 +1,25 @@
 from flask import Flask, request, jsonify
 import joblib
 import re, json, logging
-import pandas as pd
 from sentence_transformers import SentenceTransformer
 from urllib.parse import urlparse
 from scipy.sparse import csr_matrix, hstack
-import numpy as np
 from sklearn.preprocessing import StandardScaler
+from flask_cors import CORS
+from datetime import datetime
+import requests
 
 app = Flask(__name__)
+CORS(app)
 
-print("🔄 Loading models...")
+# -------------------- LOAD MODELS -------------------- #
 email_model = joblib.load("phishing_model.joblib")
 url_model = joblib.load("url_phishing_model.joblib")
 embedder = SentenceTransformer("sentence_embedder")
 sender_columns = joblib.load("sender_columns.joblib")
-scaler = StandardScaler()  # used later for URL features
-print("✅ Models loaded successfully.")
+scaler = StandardScaler()
 
-# === Helper Functions ===
+# -------------------- HELPERS -------------------- #
 def preprocess_text(text):
     if isinstance(text, str):
         text = text.lower()
@@ -26,19 +27,17 @@ def preprocess_text(text):
     return ''
 
 def extract_domain(sender):
-    try:
-        email = re.search(r'<(.+?)>', sender)
-        domain = email.group(1).split('@')[-1] if email else ''
-        return domain.lower()
-    except:
-        return ''
+    email = re.search(r'<(.+?)>', sender)
+    if email:
+        return email.group(1).split('@')[-1].lower()
+    return ""
 
 def extract_url_features(url):
     try:
         parsed = urlparse("http://" + str(url))
         domain = parsed.netloc.lower()
     except:
-        domain = ''
+        domain = ""
     return [
         len(str(url)),
         sum(c.isdigit() for c in str(url)),
@@ -47,71 +46,41 @@ def extract_url_features(url):
         len(domain.split('.')[-1]) if '.' in domain else 0
     ]
 
-def log_prediction(data, prediction):
-    try:
-        log_data = {
-            "sender": data.get("sender", ""),
-            "receiver": data.get("receiver", ""),
-            "subject": data.get("subject", ""),
-            "body": data.get("body", "")[:100],
-            "label": prediction.get("email_prediction", 0),
-        }
-        with open("all_predictions_log.json", "a", encoding="utf-8") as f:
-            f.write(json.dumps(log_data) + "\n")
-        logging.info("📥 Email logged successfully.")
-    except Exception as e:
-        logging.warning("⚠️ Failed to log prediction: %s", str(e))
-
-# === Main Prediction Route ===
+# -------------------- EMAIL PREDICTION ROUTE -------------------- #
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        data = request.get_json()
-
-        print("\n📩 Received email for phishing check.")
-        print(f"📨 Subject: {data.get('subject')}")
-        print(f"🧾 Sender: {data.get('sender')}")
-        print(f"🔗 URLs: {data.get('urls', [])}")
-
+        data = request.json
+        user_email = data.get("userEmail")
         subject = data.get("subject", "")
         body = data.get("body", "")
         sender = data.get("sender", "")
         urls = data.get("urls", [])
-        attachments = data.get("attachments", [])
 
-        # --- Email Classification ---
-        full_text = (subject or "") + " " + (body or "")
-        cleaned = preprocess_text(full_text)
-        print(f"🧹 Cleaned text: {cleaned[:80]}...")
-
+        # ML prediction
+        cleaned = preprocess_text(f"{subject} {body}")
         text_embed = embedder.encode([cleaned])
         text_sparse = csr_matrix(text_embed)
 
         sender_domain = extract_domain(sender)
-        print(f"📧 Extracted domain: {sender_domain}")
-
         sender_vector = [1 if col == sender_domain else 0 for col in sender_columns]
         sender_sparse = csr_matrix([sender_vector])
 
-        combined_features = hstack([text_sparse, sender_sparse])
-        email_pred = int(email_model.predict(combined_features)[0])
-        email_conf = float(email_model.predict_proba(combined_features)[0][email_pred])
+        combined = hstack([text_sparse, sender_sparse])
+        email_pred = int(email_model.predict(combined)[0])
+        email_conf = float(email_model.predict_proba(combined)[0][email_pred])
 
-        print(f"📊 Email prediction: {'Phishing' if email_pred == 1 else 'Safe'} ({email_conf:.4f})")
-
-        # --- URL Classification ---
+        # URL predictions
         url_results = []
         for url in urls:
-            features = extract_url_features(url)
-            features_scaled = scaler.fit_transform([features])
-            pred = int(url_model.predict(features_scaled)[0])
-            conf = float(url_model.predict_proba(features_scaled)[0][pred])
-
-            print(f"🔍 URL: {url} ➜ {'Phishing' if pred == 1 else 'Safe'} ({conf:.4f})")
+            feats = extract_url_features(url)
+            scaled = scaler.fit_transform([feats])
+            up = int(url_model.predict(scaled)[0])
+            uc = float(url_model.predict_proba(scaled)[0][up])
             url_results.append({
                 "url": url,
-                "prediction": pred,
-                "confidence": round(conf, 4)
+                "prediction": up,
+                "confidence": round(uc, 4)
             })
 
         result = {
@@ -120,14 +89,31 @@ def predict():
             "url_results": url_results
         }
 
-        log_prediction(data, result)
-        print("✅ Prediction complete.\n")
+        # forward to Node backend
+        try:
+            requests.post(
+                "http://localhost:5000/api/emails",
+                json={
+                    "userEmail": user_email,
+                    "subject": subject,
+                    "body": body,
+                    "sender": sender,
+                    "urls": url_results,
+                    "prediction": email_pred,
+                    "confidence": round(email_conf, 4)
+                }
+            )
+        except Exception as e:
+            print("Failed to send to Node:", e)
+
         return jsonify(result)
 
     except Exception as e:
-        print(f"❌ Error during prediction: {str(e)}\n")
         return jsonify({"error": str(e)}), 500
 
+@app.route("/")
+def home():
+    return "Phishing API running 🚀", 200
+
 if __name__ == "__main__":
-    print("🚀 Starting phishing detection API on port 5000...")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=6000, debug=True)
