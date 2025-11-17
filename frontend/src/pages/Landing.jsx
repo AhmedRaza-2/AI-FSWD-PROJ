@@ -39,22 +39,7 @@ function Landing() {
           Download the setup below to get started.
         </p>
 
-        {/* <button
-          onClick={handleDownload}
-          className="btn btn-lg mb-4 px-5 py-3"
-          style={{
-            background: "linear-gradient(90deg, #0078D4, #00A4FF)",
-            border: "none",
-            color: "white",
-            fontSize: "18px",
-            borderRadius: "12px",
-            boxShadow: "0 0 18px rgba(0, 174, 255, 0.6)",
-          }}
-        >
-          ⬇️ Download Add‑In
-        </button> */}
-
-        <div className="d-flex justify-content-center gap-4 mt-4">
+       <div className="d-flex justify-content-center gap-4 mt-4">
           <Link
             to="/login"
             className="btn btn-outline-light px-4 py-2"
@@ -62,6 +47,9 @@ function Landing() {
               borderRadius: "10px",
               border: "1px solid #5FB2FF",
               color: "#A9C7FF",
+              boxShadow: "0 0 10px rgba(95, 178, 255, 0.5)",
+              transition: "0.3s",
+              animation: "glowOutline 2s ease-in-out infinite alternate",
             }}
           >
             Login
@@ -74,7 +62,9 @@ function Landing() {
               background: "linear-gradient(90deg, #6E3AFF, #9D65FF)",
               borderRadius: "10px",
               color: "white",
-              boxShadow: "0 0 14px rgba(125, 85, 255, 0.6)",
+              boxShadow: "0 0 10px rgba(125, 85, 255, 0.6)",
+              transition: "0.3s",
+              animation: "glowFilled 2s ease-in-out infinite alternate",
             }}
           >
             Register
