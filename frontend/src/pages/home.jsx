@@ -13,6 +13,7 @@ import {
   Badge,
 } from 'react-bootstrap';
 import NavbarComponent from '../components/navbar';
+import Waves from '../components/Waves';
 
 // PhishShield (React-Bootstrap + Framer Motion) — Sci‑Fi / Hologram UI
 // Notes:
@@ -89,11 +90,17 @@ export default function PhishingLanding() {
           radial-gradient(circle at 80% 60%, rgba(110,58,255,0.02) 0%, transparent 50%),
           radial-gradient(circle at 40% 80%, rgba(159,214,255,0.015) 0%, transparent 40%);
         z-index: 1;
+        pointer-events: none;
       }
 
       .hero-content{
         position: relative;
-        z-index: 2;
+        z-index: 10;
+      }
+
+      .hero-section .container {
+        position: relative;
+        z-index: 10;
       }
 
       .hero-badge{
@@ -758,6 +765,20 @@ export default function PhishingLanding() {
 
         {/* VS Code-Inspired Hero Section */}
         <section className="hero-section">
+          {/* Waves Background */}
+          <Waves
+            lineColor="rgba(255, 255, 255, 0.1)"
+            backgroundColor="transparent"
+            waveSpeedX={0.02}
+            waveSpeedY={0.01}
+            waveAmpX={40}
+            waveAmpY={20}
+            friction={0.9}
+            tension={0.01}
+            maxCursorMove={120}
+            xGap={12}
+            yGap={36}
+          />
           <div className="hero-background-gradient"></div>
           
           <Container>
