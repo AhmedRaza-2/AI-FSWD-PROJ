@@ -1,34 +1,32 @@
-const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
 
-router.post("/", async (req, res) => {
+router.post("/save", async (req, res) => {
   try {
-    const userEmail = req.body.userEmail || req.body.email;
-    const prediction = req.body.prediction || req.body.label;
+    const { userEmail, emailContent, prediction, score } = req.body;
 
+    const safeName = userEmail.replace(/[@.]/g, "_");
+    const collectionName = `emails_${safeName}`;
 
-    // Sanitize collection name
-    if (!userEmail) return res.status(400).json({ error: "userEmail missing" });
-        const collectionName = "emails_" + userEmail.replace(/[@.]/g, "_");
+    const DynamicEmailModel = mongoose.model(
+      collectionName,
+      new mongoose.Schema({
+        emailContent: String,
+        prediction: String,
+        score: Number,
+        createdAt: { type: Date, default: Date.now }
+      }),
+      collectionName
+    );
 
-    const userCollection = mongoose.connection.collection(collectionName);
-
-    await userCollection.insertOne({
-      subject,
-      body,
-      sender,
-      urls,
+    const saved = await DynamicEmailModel.create({
+      emailContent,
       prediction,
-      confidence,
-      timestamp: new Date()
+      score
     });
 
-    res.json({ status: "ok" });
+    res.json({ message: "Saved!", data: saved });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error("SAVE ERROR:", err);
+    res.status(500).json({ error: "Save failed" });
   }
 });
-
-module.exports = router;

@@ -1,30 +1,30 @@
+// server.js
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
-
-const userRoutes = require("./routes/users");
-const emailRoutes = require("./routes/emails");
+const { connectDB } = require("./db");
 
 const app = express();
-
-// Middlewares
 app.use(express.json());
 app.use(cors());
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => {
-    console.error("❌ MongoDB Error:", err);
-    process.exit(1);
-  });
+// connect to Mongo
+connectDB().catch(err => {
+  console.error("Fatal DB connect error:", err);
+  process.exit(1);
+});
 
-// Routes
+// routes
+const userRoutes = require("./routes/users");
+const emailRoutes = require("./routes/emails");
+
 app.use("/api/user", userRoutes);
 app.use("/api/emails", emailRoutes);
 
-// Start server
+// health
+app.get("/", (req, res) => {
+  res.send("Phishing Node backend running ✅");
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

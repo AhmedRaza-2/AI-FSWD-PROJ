@@ -56,8 +56,29 @@ def predict():
         body = data.get("body", "")
         sender = data.get("sender", "")
         urls = data.get("urls", [])
+        # FIX: If array contains individual characters, join them
+        raw_urls = data.get("urls", [])
 
-        # ML prediction
+        urls = []
+
+# Case 1: URL characters list like ['h','t','t','p']
+        if len(raw_urls) > 0 and isinstance(raw_urls[0], str) and len(raw_urls) > 5:
+            combined = "".join(raw_urls)
+            urls.append(combined)
+
+# Case 2: Proper URL list of strings
+        elif all(isinstance(x, str) for x in raw_urls):
+            urls = raw_urls
+
+# Case 3: Nested character-lists like [ ['h','t','t','p',...] ]
+        elif all(isinstance(x, list) for x in raw_urls):
+            for item in raw_urls:
+                urls.append("".join(item))
+
+# Fallback for safety
+        else:
+            urls = []
+# ML prediction
         cleaned = preprocess_text(f"{subject} {body}")
         text_embed = embedder.encode([cleaned])
         text_sparse = csr_matrix(text_embed)

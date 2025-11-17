@@ -58,18 +58,31 @@ export default function Dashboard({ userEmail }) {
                             <td>
                                 {email.urls && email.urls.length > 0 ? (
                                     email.urls.map((u, i) => (
-                                        <div key={i}>
+                                        <div key={i} className="mb-1">
                                             <a
                                                 href={u.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                style={{ color: "blue", textDecoration: "underline" }}
+                                                style={{
+                                                    color: "#007bff",
+                                                    fontWeight: "bold",
+                                                    textDecoration: "underline"
+                                                }}
                                             >
-                                                {u.url}
+                                                {u.url.length > 50 ? u.url.substring(0, 50) + "..." : u.url}
                                             </a>
-                                            <span>
-                                                {u.prediction === 1 ? " ❌ Phishing" : " ✅ Clean"}
-                                                ({u.confidence})
+
+                                            <span
+                                                style={{
+                                                    marginLeft: 8,
+                                                    padding: "2px 6px",
+                                                    borderRadius: "5px",
+                                                    backgroundColor: u.prediction === 1 ? "#ffcccc" : "#ccffcc",
+                                                    fontSize: "12px"
+                                                }}
+                                            >
+                                                {u.prediction === 1 ? "🚨 Phishing" : "✅ Clean"} (
+                                                {u.confidence})
                                             </span>
                                         </div>
                                     ))
