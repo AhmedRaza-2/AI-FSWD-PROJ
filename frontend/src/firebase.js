@@ -1,5 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  getAuth,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBt3oXJuXno2Mf6ebxF1UWphsyKHafPbvk",
@@ -12,4 +19,35 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const googleProvider = new GoogleAuthProvider();
+const signInWithGoogle = async () => {
+  try {
+    const res = await signInWithPopup(auth, googleProvider);
+    const user = res.user;
+    console.log(user);
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
+
+const githubProvider = new GithubAuthProvider();
+const signInWithGithub = async () => {
+  try {
+    const res = await signInWithPopup(auth, githubProvider);
+    const user = res.user;
+    console.log(user);
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
+
+const logout = () => {
+  signOut(auth);
+};
+
+export { app, auth, db, signInWithGoogle, signInWithGithub, logout };
