@@ -9,7 +9,9 @@ const EmailSchema = new mongoose.Schema({
   urls: { type: Array, default: [] },
   prediction: { type: Number },   // 1 = phishing, 0 = clean (match your system)
   confidence: { type: Number },
-  timestamp: { type: Date, default: Date.now }
+  date:String,
+  time:String,
+  day:String,
 });
 
 module.exports = mongoose.model("Email", EmailSchema);

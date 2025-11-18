@@ -9,7 +9,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Landing from "./pages/Landing";
 import FeatureCard from "./pages/home";
-import LandingDownload from "./pages/LandingDownload";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -30,7 +29,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<FeatureCard />} />
-        <Route path="/download" element={<LandingDownload />} />
         <Route path="/dashboard" element={<Dashboard userEmail={userEmail} />} />
      </Routes>
     </Router>

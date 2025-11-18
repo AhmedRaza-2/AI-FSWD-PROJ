@@ -1,13 +1,11 @@
 from flask import Flask, request, jsonify
-import joblib
-import re, json, logging
+import joblib,requests,re, json, logging
 from sentence_transformers import SentenceTransformer
 from urllib.parse import urlparse
 from scipy.sparse import csr_matrix, hstack
 from sklearn.preprocessing import StandardScaler
 from flask_cors import CORS
 from datetime import datetime
-import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -109,7 +107,10 @@ def predict():
             "email_confidence": round(email_conf, 4),
             "url_results": url_results
         }
-
+        now = datetime.now()
+        date_str = now.strftime("%Y-%m-%d")
+        time_str = now.strftime("%H:%M:%S")
+        day_str = now.strftime("%A")   
         # forward to Node backend
         try:
             requests.post(
@@ -121,7 +122,10 @@ def predict():
                     "sender": sender,
                     "urls": url_results,
                     "prediction": email_pred,
-                    "confidence": round(email_conf, 4)
+                    "confidence": round(email_conf, 4),
+                    "date": date_str,
+                    "time": time_str,
+                    "day": day_str
                 }
             )
         except Exception as e:

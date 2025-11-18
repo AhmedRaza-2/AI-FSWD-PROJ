@@ -6,6 +6,7 @@ export default function Dashboard({ userEmail }) {
     const [emails, setEmails] = useState([]);
     const [initialLoading, setInitialLoading] = useState(true);
     const cacheRef = useRef(null); // store previous emails to prevent unnecessary rerender
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
     const fetchEmails = async (firstLoad = false) => {
         try {
@@ -32,7 +33,27 @@ export default function Dashboard({ userEmail }) {
 
         const interval = setInterval(() => fetchEmails(false), 5000); // smooth update every 5s
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userEmail]);
+
+    const sortedEmails = React.useMemo(() => {
+        if (!sortConfig.key) return emails;
+        return [...emails].sort((a, b) => {
+            let valA = a[sortConfig.key], valB = b[sortConfig.key];
+            if (typeof valA === "string") valA = valA.toLowerCase();
+            if (typeof valB === "string") valB = valB.toLowerCase();
+            if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+            if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+            return 0;
+        });
+    }, [emails, sortConfig]);
+
+    const handleSort = key => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc"
+        }));
+    };
 
     if (!userEmail) return <p>Please login to see your dashboard.</p>;
     if (initialLoading) return <p>Loading your emails...</p>;
@@ -41,28 +62,28 @@ export default function Dashboard({ userEmail }) {
         <div className="container mt-5">
             <h2>📊 Dashboard for {userEmail}</h2>
 
-            {/* Summary + Charts */}
+            {/* Enhanced Summary + Charts */}
             <EmailSummary emails={emails} />
 
             {/* Emails Table */}
             <table className="table table-striped mt-3">
                 <thead>
                     <tr>
-                        <th>Subject</th>
-                        <th>Sender</th>
-                        <th>Prediction</th>
-                        <th>Confidence</th>
+                        <th onClick={() => handleSort("subject")} style={{cursor:"pointer"}}>Subject</th>
+                        <th onClick={() => handleSort("sender")} style={{cursor:"pointer"}}>Sender</th>
+                        <th onClick={() => handleSort("prediction")} style={{cursor:"pointer"}}>Prediction</th>
+                        <th onClick={() => handleSort("confidence")} style={{cursor:"pointer"}}>Confidence</th>
                         <th>URLs</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {emails.length === 0 && (
+                    {sortedEmails.length === 0 && (
                         <tr>
                             <td colSpan="5" className="text-center">No scanned emails yet.</td>
                         </tr>
                     )}
 
-                    {emails.map((email, idx) => (
+                    {sortedEmails.map((email, idx) => (
                         <tr key={email._id || idx}>
                             <td>{email.subject}</td>
                             <td>{email.sender}</td>
