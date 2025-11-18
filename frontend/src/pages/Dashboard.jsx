@@ -59,7 +59,7 @@ export default function Dashboard({ userEmail }) {
     if (initialLoading) return <p>Loading your emails...</p>;
 
     return (
-        <div className="container mt-5">
+        <div className="container" style={{ marginTop: "100px", paddingBottom: "40px" }}>
             <h2>📊 Dashboard for {userEmail}</h2>
 
             {/* Enhanced Summary + Charts */}

@@ -8,11 +8,6 @@
   --glass: rgba(255, 255, 255, 0.04);
 }
 
-/* Body padding for fixed navbar */
-body {
-  padding-top: 80px; /* Adjust based on navbar height */
-}
-
 /* Holo Card Effect */
 .holo-card {
   background: linear-gradient(
