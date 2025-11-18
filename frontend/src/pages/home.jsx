@@ -12,8 +12,8 @@ import {
   Image,
   Badge,
 } from 'react-bootstrap';
-import NavbarComponent from '../components/navbar';
 import Waves from '../components/Waves';
+import FooterComponent from '../components/Footer';
 
 // PhishShield (React-Bootstrap + Framer Motion) — Sci‑Fi / Hologram UI
 // Notes:
@@ -62,7 +62,7 @@ export default function PhishingLanding() {
       }
       .phish-container{
         padding-top: 0;
-        padding-bottom: 3rem;
+        padding-bottom: 0;
         padding-left: 0;
         padding-right: 0;
         max-width: 100%;
@@ -630,67 +630,7 @@ export default function PhishingLanding() {
         transform: translateY(-2px);
       }
 
-      /* Footer Section */
-      .footer-section{
-        padding: 4rem 0 2rem;
-        background: rgba(0,0,0,0.2);
-        border-top: 1px solid rgba(255,255,255,0.05);
-      }
 
-      .footer-brand-title{
-        color: #9fd6ff;
-        font-weight: 700;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-      }
-
-      .footer-brand-description{
-        color: rgba(232,244,253,0.7);
-        line-height: 1.6;
-        margin: 0;
-      }
-
-      .footer-heading{
-        color: #ffffff;
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .footer-list{
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      .footer-link{
-        color: rgba(232,244,253,0.7);
-        text-decoration: none;
-        line-height: 2;
-        transition: color 0.2s ease;
-      }
-
-      .footer-link:hover{
-        color: #9fd6ff;
-      }
-
-      .footer-divider{
-        border: none;
-        height: 1px;
-        background: rgba(255,255,255,0.05);
-        margin: 2rem 0 1.5rem;
-      }
-
-      .footer-copyright{
-        color: rgba(232,244,253,0.6);
-        font-size: 0.9rem;
-      }
-
-      .footer-legal{
-        font-size: 0.9rem;
-      }
 
       .muted{color:rgba(230,240,255,0.65)}
 
@@ -759,12 +699,10 @@ export default function PhishingLanding() {
 
   return (
     <div className="phish-shell">
-      {/* Add Navbar Component */}
-      <NavbarComponent />
       <Container fluid className="phish-container">
 
         {/* VS Code-Inspired Hero Section */}
-        <section className="hero-section">
+        <section className="hero-section" style={{ paddingTop: "100px" }}>
           {/* Waves Background */}
           <Waves
             lineColor="rgba(255, 255, 255, 0.1)"
@@ -1222,61 +1160,8 @@ export default function PhishingLanding() {
           </Container>
         </section>
 
-        {/* Footer */}
-        <footer className="footer-section">
-          <Container>
-            <Row className="g-4">
-              <Col md={4}>
-                <div className="footer-brand mb-4">
-                  <h5 className="footer-brand-title">PhishShield</h5>
-                  <p className="footer-brand-description">
-                    AI-powered email security platform protecting organizations worldwide from advanced phishing threats.
-                  </p>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="footer-links">
-                  <h6 className="footer-heading">Product</h6>
-                  <ul className="footer-list">
-                    <li><a href="#features" className="footer-link">Features</a></li>
-                    <li><a href="#pricing" className="footer-link">Pricing</a></li>
-                    <li><a href="#docs" className="footer-link">Documentation</a></li>
-                    <li><a href="#support" className="footer-link">Support</a></li>
-                  </ul>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="footer-links">
-                  <h6 className="footer-heading">Company</h6>
-                  <ul className="footer-list">
-                    <li><a href="#about" className="footer-link">About Us</a></li>
-                    <li><a href="#careers" className="footer-link">Careers</a></li>
-                    <li><a href="#contact" className="footer-link">Contact</a></li>
-                    <li><a href="#blog" className="footer-link">Blog</a></li>
-                  </ul>
-                </div>
-              </Col>
-            </Row>
-
-            <hr className="footer-divider" />
-            
-            <Row className="align-items-center">
-              <Col md={6}>
-                <p className="footer-copyright mb-0">
-                  © {new Date().getFullYear()} PhishShield. All rights reserved.
-                </p>
-              </Col>
-              <Col md={6} className="text-md-end">
-                <div className="footer-legal">
-                  <a href="#privacy" className="footer-link me-3">Privacy Policy</a>
-                  <a href="#terms" className="footer-link">Terms of Service</a>
-                </div>
-              </Col>
-            </Row>
-          </Container>
-        </footer>
+        {/* Footer Component */}
+        <FooterComponent />
       </Container>
     </div>
   );
