@@ -50,7 +50,6 @@ function App() {
         <Route path="/features" element={<Features />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/landing" element={<Landing />} />
-        <Route path="/download" element={<LandingDownload />} />
         <Route path="/dashboard" element={<Dashboard userEmail={user?.email} />} />
         <Route path="/profile" element={<Profile />} />
      </Routes>

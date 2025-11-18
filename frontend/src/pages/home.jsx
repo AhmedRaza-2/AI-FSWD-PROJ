@@ -822,7 +822,7 @@ export default function PhishingLanding() {
                     
                     <div className="preview-content">
                       <Image 
-                        src={process.env.PUBLIC_URL + '/screenshot.png'} 
+                        src="/image.png" 
                         alt="PhishShield Dashboard" 
                         fluid 
                         className="main-preview-image"
